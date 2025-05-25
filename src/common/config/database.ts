@@ -15,7 +15,7 @@ export const knexConfig: Knex.Config = {
 	pool: { min: 1, max: 5, idleTimeoutMillis: 600000, propagateCreateError: false },
 	migrations: {
 		tableName: 'knex_migrations',
-		directory: process.env.NODE_ENV === 'production' ? './migrations' : './src/migrations',
+		directory: process.env.NODE_ENV === 'production' ? './migrations' : './migrations',
 		extension: process.env.NODE_ENV === 'production' ? 'js' : 'ts',
 	},
 	acquireConnectionTimeout: 5000,
