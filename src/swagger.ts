@@ -13,7 +13,7 @@ const options = {
 			{
 				url:
 					ENVIRONMENT.APP.ENV === 'production'
-						? 'https://backend-5781.onrender.com/api/v1'
+						? 'https://one00-minds-v2.onrender.com/api/v1'
 						: `http://localhost:${ENVIRONMENT.APP.PORT || 3000}/api/v1`,
 				description: ENVIRONMENT.APP.ENV === 'production' ? 'Production server' : 'Development server',
 			},
