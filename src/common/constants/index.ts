@@ -14,3 +14,14 @@ export enum AccountType {
 	PERSONAL = 'personal',
 	ORGANIZATION = 'organization',
 }
+
+export enum CourseStatus {
+	DRAFT = 'draft',
+	PUBLISHED = 'published',
+}
+
+export enum VideoUploadStatus {
+	PROCESSING = 'processing',
+	COMPLETED = 'completed',
+	FAILED = 'failed',
+}

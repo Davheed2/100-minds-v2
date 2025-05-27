@@ -1,5 +1,6 @@
 import { AccountType, Role } from '@/common/constants';
 import { dateFromString } from '@/common/utils';
+import { de } from '@faker-js/faker/.';
 import { z } from 'zod';
 
 const passwordRegexMessage =
@@ -46,7 +47,7 @@ export const mainSchema = z.object({
 	title: z.string().min(3).trim(),
 	teamId: z.string().uuid(),
 	courseId: z.string().uuid(),
-	description: z.string().min(7),
+	description: z.string().min(3),
 	memberId: z.string().uuid(),
 	chapterId: z.string().uuid(),
 	favouriteId: z.string().uuid(),

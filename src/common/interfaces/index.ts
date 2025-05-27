@@ -5,3 +5,5 @@ export * from './token';
 export * from './hashData';
 export * from './aws';
 export * from './emailQueue';
+export * from './course';
+export * from './modules';
