@@ -21,6 +21,10 @@ class CourseRepository {
 	findAll = async () => {
 		return await knexDb.table('courses').orderBy('created_at', 'desc');
 	};
+
+	findAllForClients = async (): Promise<ICourse[]> => {
+		return await knexDb.table('courses').where({ isDeleted: false, status: 'published' }).orderBy('created_at', 'desc');
+	};
 }
 
 export const courseRepository = new CourseRepository();

@@ -25,3 +25,11 @@ export enum VideoUploadStatus {
 	COMPLETED = 'completed',
 	FAILED = 'failed',
 }
+
+export enum ContentType {
+	VIDEO = 'video',
+	TEXT = 'text',
+	QUIZ = 'quiz',
+	ASSIGNMENT = 'assignment',
+	FILE = 'file',
+}
