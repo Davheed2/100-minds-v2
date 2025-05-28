@@ -815,4 +815,6 @@ router.post('/course-content', multerUpload.single('fileContent'), courseControl
  */
 router.get('/course-content', courseController.getCourseContent);
 
+router.get('/get-course', courseController.getCourse);
+
 export { router as courseRouter };

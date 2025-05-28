@@ -39,6 +39,49 @@ export class CourseController {
 		return AppResponse(res, 201, toJSON(course), 'Course created successfully');
 	});
 
+	getCourse = catchAsync(async (req: Request, res: Response) => {
+		const { user } = req;
+		const { courseId } = req.query;
+
+		if (!user) {
+			throw new AppError('Please log in again', 400);
+		}
+
+		const course = await courseRepository.findById(courseId as string);
+		if (!course) {
+			throw new AppError('Course not found', 404);
+		}
+
+		return AppResponse(res, 200, toJSON([course]), 'Course retreived successfully');
+	});
+
+	// updateCourse = catchAsync(async (req: Request, res: Response) => {
+	// 	const { user } = req;
+	// 	const { title, status, description, courseId } = req.body;
+
+	// 	if (!user) {
+	// 		throw new AppError('Please log in again', 400);
+	// 	}
+	// 	if (user.role !== 'super_admin') {
+	// 		throw new AppError('Only a super admin can update a course', 403);
+	// 	}
+	// 	if (!description || !title || !courseId) {
+	// 		throw new AppError('Incomplete update data', 400);
+	// 	}
+
+	// 	const course = await courseRepository.findById(courseId);
+	// 	if (!course) {
+	// 		throw new AppError('Course not found', 404);
+	// 	}
+
+	// 	const updatedCourse = await moduleRepository.update(courseId, { title, description });
+	// 	if (!updatedCourse) {
+	// 		throw new AppError('Course not updated', 400);
+	// 	}
+
+	// 	return AppResponse(res, 200, toJSON(updatedCourse), 'Course updated successfully');
+	// });
+
 	getAllCourses = catchAsync(async (req: Request, res: Response) => {
 		const { user } = req;
 
@@ -114,6 +157,33 @@ export class CourseController {
 
 		return AppResponse(res, 200, toJSON(modules), 'Course Modules retrieved successfully');
 	});
+
+	// updateModule = catchAsync(async (req: Request, res: Response) => {
+	// 	const { user } = req;
+	// 	const { title, moduleId } = req.body;
+
+	// 	if (!user) {
+	// 		throw new AppError('Please log in again', 400);
+	// 	}
+	// 	if (user.role !== 'super_admin') {
+	// 		throw new AppError('Only a super admin can update a module', 403);
+	// 	}
+	// 	if (!moduleId || !title) {
+	// 		throw new AppError('Incomplete update data', 400);
+	// 	}
+
+	// 	const module = await moduleRepository.findById(moduleId);
+	// 	if (!module) {
+	// 		throw new AppError('Module not found', 404);
+	// 	}
+
+	// 	const updatedModule = await moduleRepository.update(moduleId, { title });
+	// 	if (!updatedModule) {
+	// 		throw new AppError('Module not updated', 400);
+	// 	}
+
+	// 	return AppResponse(res, 200, toJSON(updatedModule), 'Module updated successfully');
+	// });
 
 	createCourseContent = catchAsync(async (req: Request, res: Response) => {
 		const { user, file } = req;
