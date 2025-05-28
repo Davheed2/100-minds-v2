@@ -47,7 +47,7 @@ export class CourseController {
 			throw new AppError('Please log in again', 400);
 		}
 
-		const course = await courseRepository.findById(courseId as string);
+		const course = await courseRepository.findCourseByIdWithModulesAndContent(courseId as string);
 		if (!course) {
 			throw new AppError('Course not found', 404);
 		}

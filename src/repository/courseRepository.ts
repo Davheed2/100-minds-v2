@@ -1,5 +1,5 @@
 import { knexDb } from '@/common/config';
-import { ICourse } from '@/common/interfaces';
+import { ICourse, ICourseContent, IModule } from '@/common/interfaces';
 import { DateTime } from 'luxon';
 
 class CourseRepository {
@@ -24,6 +24,34 @@ class CourseRepository {
 
 	findAllForClients = async (): Promise<ICourse[]> => {
 		return await knexDb.table('courses').where({ isDeleted: false, status: 'published' }).orderBy('created_at', 'desc');
+	};
+
+	findCourseByIdWithModulesAndContent = async (
+		id: string
+	): Promise<(ICourse & { modules: (IModule & { contents: ICourseContent[] })[] }) | null> => {
+		const course: ICourse | undefined = await knexDb.table('courses').where({ id, isDeleted: false }).first();
+
+		if (!course) return null;
+
+		const modules: IModule[] = await knexDb.table('course_modules').where({ courseId: course.id, isDeleted: false });
+
+		const modulesWithContents = await Promise.all(
+			modules.map(async (module) => {
+				const contents: ICourseContent[] = await knexDb
+					.table('course_content')
+					.where({ moduleId: module.id, isDeleted: false });
+
+				return {
+					...module,
+					contents,
+				};
+			})
+		);
+
+		return {
+			...course,
+			modules: modulesWithContents,
+		};
 	};
 }
 
