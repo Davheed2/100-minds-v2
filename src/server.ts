@@ -71,7 +71,7 @@ app.use(limiter);
 app.use(
 	cors({
 		origin: [
-			'https://one00-minds-v2-0-frontend.onrender.com/',
+			'https://one00-minds-v2-0-frontend.onrender.com',
 			'https://app.100-minds.com',
 			'https://admin-mmyv.onrender.com',
 			'http://localhost:5173',
