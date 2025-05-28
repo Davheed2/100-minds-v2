@@ -622,7 +622,7 @@ router.get('/course-modules', courseController.getAllModulesByCourseId);
  *     summary: Upload a video using a pre-signed URL
  *     description: Uploads a video file to the storage service using the pre-signed URL obtained from the create course video content endpoint. The request body should contain the binary video file.
  *     tags:
- *       - Course
+ *       - Courses
  *     parameters:
  *       - in: query
  *         name: signedUrl
