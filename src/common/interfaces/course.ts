@@ -1,4 +1,4 @@
-import { VideoUploadStatus } from '../constants';
+import { ContentType, SubmissionType, VideoUploadStatus } from '../constants';
 //import { IQuiz } from './quiz';
 
 export interface ICourse {
@@ -7,6 +7,25 @@ export interface ICourse {
 	description: string;
 	status: string;
 	userId: string;
+	isDeleted: boolean;
+	created_at?: Date;
+	updated_at?: Date;
+}
+
+export interface ICourseContent {
+	id: string;
+	title: string;
+	description: string;
+	videoUrl: string;
+	fileUrl: string;
+	contentType: ContentType;
+	maxScore: string;
+	submissionType: SubmissionType;
+	dueDate: string;
+	duration: string;
+	uploadStatus: string;
+	courseId: string;
+	moduleId: string;
 	isDeleted: boolean;
 	created_at?: Date;
 	updated_at?: Date;

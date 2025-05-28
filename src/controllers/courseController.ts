@@ -1,8 +1,16 @@
 import { Request, Response } from 'express';
-import { AppError, AppResponse, toJSON, uploadPictureFile } from '@/common/utils';
+import {
+	AppError,
+	AppResponse,
+	generatePresignedUrl,
+	toJSON,
+	uploadDocumentFile,
+	uploadPictureFile,
+} from '@/common/utils';
 import { catchAsync } from '@/middlewares';
-import { courseRepository, moduleRepository } from '@/repository';
-import { ICourse } from '@/common/interfaces';
+import { courseContentRepository, courseRepository, moduleRepository } from '@/repository';
+import { ICourse, ICourseContent } from '@/common/interfaces';
+import { ENVIRONMENT } from '@/common/config';
 
 export class CourseController {
 	createCourse = catchAsync(async (req: Request, res: Response) => {
@@ -105,6 +113,164 @@ export class CourseController {
 		}
 
 		return AppResponse(res, 200, toJSON(modules), 'Course Modules retrieved successfully');
+	});
+
+	createCourseContent = catchAsync(async (req: Request, res: Response) => {
+		const { user, file } = req;
+		const {
+			courseId,
+			moduleId,
+			contentType,
+			title,
+			description,
+			dueDate,
+			maxScore,
+			submissionType,
+			fileName,
+			fileType,
+			fileSize,
+			videoLength,
+		} = req.body;
+
+		if (!user) {
+			throw new AppError('Please log in again', 400);
+		}
+		if (!courseId || !moduleId || !contentType) {
+			throw new AppError('CourseId, moduleId and contentType are required', 400);
+		}
+
+		let courseContent: Partial<ICourseContent[]> | undefined;
+		if (contentType === 'text') {
+			const textContentExist = await courseContentRepository.findContent(moduleId, 'text');
+			if (textContentExist.length > 1) {
+				throw new AppError('Only one text file can exist under a module', 400);
+			}
+			if (!title) {
+				throw new AppError('Title is required', 400);
+			}
+
+			courseContent = await courseContentRepository.create({
+				courseId,
+				moduleId,
+				title,
+				description,
+				contentType,
+			});
+
+			if (!courseContent) {
+				throw new AppError('Failed to create course text content', 500);
+			}
+
+			return AppResponse(res, 201, toJSON(courseContent), 'Course text content created successfully');
+		}
+
+		if (contentType === 'quiz') {
+			if (!description) throw new AppError('quiz instruction is required', 400);
+			if (!title) {
+				throw new AppError('Title is required', 400);
+			}
+
+			courseContent = await courseContentRepository.create({
+				courseId,
+				moduleId,
+				title,
+				description,
+				contentType,
+			});
+
+			if (!courseContent) {
+				throw new AppError('Failed to create course quiz content', 500);
+			}
+
+			return AppResponse(res, 201, toJSON(courseContent), 'Course quiz content created successfully');
+		}
+
+		if (contentType === 'video') {
+			if (!title || !description || !fileName || !fileType || !fileSize || !videoLength) {
+				throw new AppError('title, description, fileName, fileType, fileSize and videoLength are required', 400);
+			}
+
+			const { signedUrl, key } = await generatePresignedUrl(fileName, fileType, fileSize);
+
+			courseContent = await courseContentRepository.create({
+				courseId,
+				moduleId,
+				title,
+				description,
+				videoUrl: `${ENVIRONMENT.R2.PUBLIC_URL}/${key}`,
+				duration: videoLength,
+				uploadStatus: 'uploading',
+				contentType,
+			});
+
+			if (!courseContent) {
+				throw new AppError('Failed to create course video content', 500);
+			}
+
+			return AppResponse(res, 201, { signedUrl, key }, 'Course video content created successfully');
+		}
+
+		if (contentType === 'file') {
+			if (!file) {
+				throw new AppError('File is required for file content type', 400);
+			}
+			if (!title) {
+				throw new AppError('Title is required', 400);
+			}
+
+			const { secureUrl: fileUrl } = await uploadDocumentFile({
+				fileName: `course-file/${Date.now()}-${file.originalname}`,
+				buffer: file.buffer,
+				mimetype: file.mimetype,
+			});
+
+			courseContent = await courseContentRepository.create({
+				courseId,
+				moduleId,
+				title,
+				description,
+				fileUrl,
+				contentType,
+			});
+
+			if (!courseContent) {
+				throw new AppError('Failed to create course file content', 500);
+			}
+
+			return AppResponse(res, 201, toJSON(courseContent), 'Course file content created successfully');
+		}
+
+		if (contentType === 'assignment') {
+			if (!maxScore) {
+				throw new AppError('Max Score is required', 400);
+			}
+			if (!submissionType) {
+				throw new AppError('submissionType is required', 400);
+			}
+			if (!description) {
+				throw new AppError('Description is required', 400);
+			}
+			if (!title) {
+				throw new AppError('Title is required', 400);
+			}
+
+			courseContent = await courseContentRepository.create({
+				courseId,
+				moduleId,
+				title,
+				description,
+				dueDate,
+				maxScore,
+				submissionType,
+				contentType,
+			});
+
+			if (!courseContent) {
+				throw new AppError('Failed to create course assignment content', 500);
+			}
+
+			return AppResponse(res, 201, toJSON(courseContent), 'Course assignment content created successfully');
+		}
 	});
 }
 

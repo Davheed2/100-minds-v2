@@ -1,4 +1,4 @@
-import { AccountType, Role } from '@/common/constants';
+import { AccountType, ContentType, Role, SubmissionType } from '@/common/constants';
 import { dateFromString } from '@/common/utils';
 import { de } from '@faker-js/faker/.';
 import { z } from 'zod';
@@ -48,6 +48,17 @@ export const mainSchema = z.object({
 	teamId: z.string().uuid(),
 	courseId: z.string().uuid(),
 	description: z.string().min(3),
+	contentType: z.enum([
+		ContentType.ASSIGNMENT,
+		ContentType.FILE,
+		ContentType.QUIZ,
+		ContentType.TEXT,
+		ContentType.VIDEO,
+	]),
+	videoUrl: z.string().min(7),
+	dueDate: z.string().min(3),
+	maxScore: z.string(),
+	submissionType: z.enum([SubmissionType.FILE, SubmissionType.TEXT, SubmissionType.URL]),
 	memberId: z.string().uuid(),
 	chapterId: z.string().uuid(),
 	favouriteId: z.string().uuid(),

@@ -33,3 +33,9 @@ export enum ContentType {
 	ASSIGNMENT = 'assignment',
 	FILE = 'file',
 }
+
+export enum SubmissionType {
+	TEXT = 'text_submission',
+	URL = 'url_submission',
+	FILE = 'file_upload',
+}
