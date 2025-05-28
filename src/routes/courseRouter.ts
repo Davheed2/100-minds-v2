@@ -676,5 +676,143 @@ router.get('/course-modules', courseController.getAllModulesByCourseId);
  *                   example: "Failed to upload the video to the storage service"
  */
 router.post('/course-content', multerUpload.single('fileContent'), courseController.createCourseContent);
+/**
+ * @openapi
+ * /course/course-content:
+ *   get:
+ *     summary: Retrieve course content by course ID, module ID, and content type
+ *     description: Retrieves course content for a specific course and module, filtered by content type. The endpoint validates the user's authentication, ensures the required query parameters (courseId, moduleId, and contentType) are provided, and fetches the matching course content.
+ *     tags:
+ *       - Courses
+ *     parameters:
+ *       - in: query
+ *         name: courseId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *           example: "942ae4ce-1108-4f3c-8f4a-f043064942ce"
+ *         description: The ID of the course containing the content
+ *       - in: query
+ *         name: moduleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *           example: "d3a5d648-6077-46de-b051-d904fe428773"
+ *         description: The ID of the module containing the content
+ *       - in: query
+ *         name: contentType
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [text, quiz, video, file, assignment]
+ *           example: "file"
+ *         description: The type of content to retrieve
+ *     responses:
+ *       200:
+ *         description: Course content retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "9a9410c3-ef37-4a64-bc6c-085ec350ad4a"
+ *                       title:
+ *                         type: string
+ *                         example: "File Content"
+ *                       description:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       videoUrl:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       fileUrl:
+ *                         type: string
+ *                         nullable: true
+ *                         example: "https://pub-b3c115b60ec04ceaae8ac7360bf42530.r2.dev/course-file/1748398328014-David Okonkwo Resume .pdf"
+ *                       maxScore:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       dueDate:
+ *                         type: string
+ *                         format: date-time
+ *                         nullable: true
+ *                         example: null
+ *                       submissionType:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       contentType:
+ *                         type: string
+ *                         example: "file"
+ *                       duration:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       uploadStatus:
+ *                         type: string
+ *                         nullable: true
+ *                         example: null
+ *                       courseId:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "942ae4ce-1108-4f3c-8f4a-f043064942ce"
+ *                       moduleId:
+ *                         type: string
+ *                         format: uuid
+ *                         example: "d3a5d648-6077-46de-b051-d904fe428773"
+ *                       isDeleted:
+ *                         type: boolean
+ *                         example: false
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-05-28T02:12:20.921Z"
+ *                 message:
+ *                   type: string
+ *                   example: "Course content retrieved successfully"
+ *       400:
+ *         description: Bad Request - User not logged in or missing required query parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "CourseId is required"
+ *       404:
+ *         description: Not Found - No course content found for the specified type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: "No file course content found"
+ */
+router.get('/course-content', courseController.getCourseContent);
 
 export { router as courseRouter };

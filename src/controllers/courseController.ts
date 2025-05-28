@@ -272,6 +272,35 @@ export class CourseController {
 			return AppResponse(res, 201, toJSON(courseContent), 'Course assignment content created successfully');
 		}
 	});
+
+	getCourseContent = catchAsync(async (req: Request, res: Response) => {
+		const { user } = req;
+		const { courseId, moduleId, contentType } = req.query;
+
+		if (!user) {
+			throw new AppError('Please log in again', 400);
+		}
+		if (!courseId) {
+			throw new AppError('CourseId is required', 400);
+		}
+		if (!moduleId) {
+			throw new AppError('ModuleId is required', 400);
+		}
+		if (!contentType) {
+			throw new AppError('content type is required', 400);
+		}
+
+		const courseContent = await courseContentRepository.findCourseContent(
+			courseId as string,
+			moduleId as string,
+			contentType as string
+		);
+		if (courseContent.length < 0) {
+			throw new AppError(`No ${contentType} course content found`, 404);
+		}
+
+		return AppResponse(res, 200, toJSON(courseContent), 'Course content retrieved successfully');
+	});
 }
 
 export const courseController = new CourseController();

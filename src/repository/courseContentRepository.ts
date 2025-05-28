@@ -25,6 +25,13 @@ class CourseContentRepository {
 	findContent = async (moduleId: string, type: string) => {
 		return await knexDb.table('course_content').where({ moduleId, contentType: type }).orderBy('created_at', 'desc');
 	};
+
+	findCourseContent = async (courseId: string, moduleId: string, type: string) => {
+		return await knexDb
+			.table('course_content')
+			.where({ courseId, moduleId, contentType: type })
+			.orderBy('created_at', 'desc');
+	};
 }
 
 export const courseContentRepository = new CourseContentRepository();
